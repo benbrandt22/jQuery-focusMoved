@@ -36,6 +36,19 @@ $('#myTable').focusMoved({
 });
 ```
 
+**Working in ASP.Net Web Forms?** Here's an interesting application. Let's say we have an UpdatePanel that we don't want to refresh until the user "tabs-out" of it (thus moving the focus out). Use `focusMoved` to detect when focus moves out, then trigger an async postback:
+
+```javascript
+$().ready(function () {
+	$('#<%= myUpdatePanel.ClientID %>')
+		.focusMoved({ out: function () {
+			// refresh the UpdatePanel after the user moves focus out of it
+			__doPostBack('<%= myUpdatePanel.ClientID %>', '');
+		}
+	});
+});
+```
+
 ## Motivation
 
 What is this useful for? Let's say you have a large table full of editable fields (textboxes, checkboxes, etc). You want to perform some action (ajax calls, calculations, etc) *after* the user finishes making edits to the table. How do we know when they're done working in this table? By detecting when the focus goes from an element within the table to an element outside the table.
