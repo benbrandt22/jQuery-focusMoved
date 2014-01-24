@@ -40,12 +40,12 @@ $('#myTable').focusMoved({
 
 ```javascript
 $().ready(function () {
-	$('#<%= myUpdatePanel.ClientID %>')
-		.focusMoved({ out: function () {
-			// refresh the UpdatePanel after the user moves focus out of it
-			__doPostBack('<%= myUpdatePanel.ClientID %>', '');
-		}
-	});
+  $('#<%= myUpdatePanel.ClientID %>')
+    .focusMoved({ focusmovedout: function () {
+      // refresh the UpdatePanel after the user moves focus out of it
+      __doPostBack('<%= myUpdatePanel.ClientID %>', '');
+    }
+  });
 });
 ```
 
