@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Detect focus entering/leaving an element that contains many focus-able children</title>
+
+	<script type='text/javascript' src='http://code.jquery.com/jquery-1.10.1.js'></script>
+	<script type='text/javascript' src='jQuery.focusMoved-1.0.js'></script>
+	
+
+<style type='text/css'>
+html, body{
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	font-size: 14px;
+	color: #333333;
+}
+
+.header{
+	padding: 0.5em;
+	font-size: 1.5em;
+	color: #FFFFFF;
+	background: #333333;
+	margin: 0 0 1em 0;
+}
+
+.focusMovedContainer{
+	display: inline-block;
+	width: 250px;
+	border: 1px solid black;
+	margin: 1em;
+	padding: 1em;
+	vertical-align: top;
+}
+
+.focusMovedContainer .id{
+	font-weight: bold;
+	padding: 0 0 0.5em 0;
+	margin: 0 0 0.5em 0;
+	color: #4387FD;
+	border-bottom: 2px solid #4387FD;
+}
+
+#editableTable td input[type=text]{
+	width: 95%;
+}
+
+#output{
+	display: block;
+	border: 1px solid #333333;
+	background: #F0F0F0;
+	margin: 1em;
+	padding: 1em;
+	height: 10em;
+	overflow-y: auto;
+}
+
+#output .timeStamp{
+	display: inline-block;
+	width: 8em;
+	color: #888888;
+}
+
+.focusinside{
+	background: #feffc8;
+}
+
+</style>
+
+	<script type='text/javascript'>
+
+	function showMessage(message){
+		$('#output').append( '<div><span class="timeStamp">' + displayTime() + '</span>' + message + '</div>' );
+		// scroll to bottom
+		$("#output").scrollTop($("#output")[0].scrollHeight);
+	}
+	
+	function displayTime() {
+		var str = "";
+
+		var currentTime = new Date();
+		var hours = currentTime.getHours();
+		var minutes = currentTime.getMinutes();
+		var seconds = currentTime.getSeconds();
+		var milliseconds = currentTime.getMilliseconds();
+
+		minutes = padLeft(minutes,'0',2);
+		seconds = padLeft(seconds,'0',2);
+		milliseconds = padLeft(milliseconds,'0',3);
+		
+		str += hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+		
+		return str;
+	}
+	
+	function padLeft(str, padString, width) {
+		var s = (Array(width).join(padString)) + str;
+		return s.substr(s.length-width);
+	}
+	
+	function focusMovedHandler(event, element){
+		var moveDescription = '';
+		if( event.type === 'focusmovedin' ){ moveDescription = 'focus entered: '; }
+		if( event.type === 'focusmovedwithin' ){ moveDescription = 'focus moved within: '; }
+		if( event.type === 'focusmovedout' ){ moveDescription = 'focus exited: '; }
+		showMessage(moveDescription + element.id);
+		
+		if( event.type === 'focusmovedin' ){
+			$(element).addClass('focusinside');
+		}
+		if( event.type === 'focusmovedout' ){
+			$(element).removeClass('focusinside');
+		}
+	}
+	
+	$().ready(function(){
+		
+		// Activate focusMoved() on our three sample elements.
+		// Set up simple "focus entered/left" behavior on all three sample elements.
+		// in, within, and out handlers can optionally be set when the plugin is applied
+		$('#divContainer, #smallForm, #editableTable').focusMoved({
+			focusmovedin: focusMovedHandler,
+			focusmovedout: focusMovedHandler
+		});
+		
+		// add an additional handler to focusmovedin on the DIV containing links
+		$('#divContainer').on('focusmovedin',function(){
+			showMessage('...you are tabbing through the links');
+		});
+		
+		// add additional handlers to the table
+		$('#editableTable')
+			.on('focusmovedin',function(){
+				showMessage('...you are editing the table data');
+			})
+			.on('focusmovedout',function(){
+				showMessage('...you are no longer editing the table data');
+			});
+		
+		// add a handler for moving within the small form
+		$('#smallForm').on('focusmovedwithin', focusMovedHandler);
+		
+	});
+
+	
+	
+	$().ready(function(){
+		// clear the output div when double-clicked
+		$('#output').dblclick(function(){
+			$(this).empty();
+		});
+	});
+	
+	</script>
+
+</head>
+<body>
+
+	<div class="header">
+	jQuery focusMoved Plugin Demo
+	</div>
+
+	<div id="divContainer" class="focusMovedContainer">
+		<div class="id">divContainer</div>
+		<p>This is a simple DIV container element that has the focusMoved plugin applied.</p>
+		<ul>
+			<li><a href="#">The First Link</a></li>
+			<li><a href="#">Another Link</a></li>
+			<li><a href="#">Some Other Link</a></li>
+			<li><a href="#">The Final Link</a></li>
+		</ul>
+	</div>
+
+	<div class="focusMovedContainer">
+		<div class="id">editableTable</div>
+		<p>Here the focusMoved plugin has been applied to the table element below.</p>
+		<table id="editableTable" border="0">
+			<tr>
+				<th>X</th>
+				<th>Column 1</th>
+				<th>Column 2</th>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text"/></td>
+				<td><input type="text"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text"/></td>
+				<td><input type="text"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text"/></td>
+				<td><input type="text"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text"/></td>
+				<td><input type="text"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text"/></td>
+				<td><input type="text"/></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="focusMovedContainer">
+		<div class="id">smallForm</div>
+		<p>focusMoved has been applied to the form element containing the fields below.</p>
+		<form id="smallForm">
+			<div><input type="text" value="Text Box"/></div>
+			<div><textarea>Text Area</textarea></div>
+			<div><button type="button">Button</button></div>
+			<div>
+				<select>
+					<option value="1">Menu Item 1</option>
+					<option value="2">Menu Item 2</option>
+					<option value="3">Menu Item 3</option>
+				</select>
+			</div>
+		<form>
+	</div>
+
+
+	<div id="output" title="double-click to clear">
+	</div>
+
+</body>
+
+
+</html>
+
